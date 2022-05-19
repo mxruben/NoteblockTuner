@@ -1,4 +1,4 @@
-TARGET_EXEC ?= program
+TARGET_EXEC ?= NoteblockTuner
 
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
