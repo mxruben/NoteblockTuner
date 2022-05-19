@@ -7,7 +7,7 @@
 
 // Platform specific headers
 #if defined(_WIN32)
-
+#include <windows.h>
 #elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -16,6 +16,11 @@
 #elif defined(__APPLE__)
 
 #endif
+
+enum class MouseButton {
+    Right,
+    Left
+};
 
 void terminal_clear() {
 #if TERMINAL_CLEAR_ENABLED
@@ -37,8 +42,34 @@ void wait_for_enter() {
     while (std::cin.get() != 10) {}
 }
 
-inline void mouse_click(unsigned int button) {
+inline void mouse_click(MouseButton button) {
 #if defined(_WIN32)
+
+    INPUT inputs[2] = {0};
+    LPPOINT mouse_pos;
+    GetCursorPos(mouse_pos);
+
+    inputs[0].type = INPUT_MOUSE;
+    inputs[0].mi.dx = mouse_pos->x;
+    inputs[0].mi.dy = mouse_pos->y;
+    
+    inputs[1].type = INPUT_MOUSE;
+
+    switch (button)
+    {
+    case MouseButton::Left:
+        inputs[0].mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_LEFTDOWN;
+        inputs[1].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+        break;
+    case MouseButton::Right:
+        inputs[0].mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_RIGHTDOWN;
+        inputs[1].mi.dwFlags = MOUSEEVENTF_RIGHTUP;
+        break;
+    default:
+        break;
+    }
+
+    SendInput(2, inputs, sizeof(INPUT));
     
 #elif defined(__LINUX__) || defined(__gnu_linux__) || defined(__linux__)
     Display *display = XOpenDisplay(NULL);
@@ -48,12 +79,26 @@ inline void mouse_click(unsigned int button) {
         std::exit(EXIT_FAILURE);
     }
 
-    XTestFakeButtonEvent(display, button, true, 0);
+    unsigned int button_id;
+
+    switch (button)
+    {
+    case MouseButton::Left:
+        button_id = 1;
+        break;
+    case MouseButton::Right:
+        button_id = 3;
+        break;
+    default:
+        break;
+    }
+
+    XTestFakeButtonEvent(display, button_id, true, 0);
     XFlush(display);
 
     //wait(10);
 
-    XTestFakeButtonEvent(display, button, false, 0);
+    XTestFakeButtonEvent(display, button_id, false, 0);
     XFlush(display);
 
     XCloseDisplay(display);
@@ -63,9 +108,9 @@ inline void mouse_click(unsigned int button) {
 }
 
 void right_mouse_click() {
-    mouse_click(3);
+    mouse_click(MouseButton::Right);
 }
 
 void left_mouse_click() {
-    mouse_click(1);
+    mouse_click(MouseButton::Left);
 }

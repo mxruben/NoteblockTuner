@@ -12,8 +12,20 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
 CXXFLAGS := -g
-LDFLAGS := -lrtmidi -lX11 -lXtst
-#-lX11 -lXtst
+LDFLAGS := -lrtmidi
+
+# os specific options
+ifeq ($(OS),Windows_NT) # windows
+	
+else
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux) # linux
+		LDFLAGS += -lX11 -lXtst
+	endif
+	ifeq ($(UNAME_S),Darwin) # OSX
+		
+	endif
+endif
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
