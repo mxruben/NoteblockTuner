@@ -93,11 +93,11 @@ inline void mouse_click(MouseButton button) {
         break;
     }
 
+    // Button down
     XTestFakeButtonEvent(display, button_id, true, 0);
     XFlush(display);
 
-    //wait(10);
-
+    // Button up
     XTestFakeButtonEvent(display, button_id, false, 0);
     XFlush(display);
 
