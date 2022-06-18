@@ -1,2 +1,8 @@
 /build/
 /.vscode
+/.vs/
+/msvc/.vs/
+/msvc/x64/
+/msvc/Release/
+/msvc/Debug/
+/msvc/NoteblockTuner.vcxproj.user
