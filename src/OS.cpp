@@ -46,12 +46,12 @@ inline void mouse_click(MouseButton button) {
 #if defined(_WIN32)
 
     INPUT inputs[2] = {0};
-    LPPOINT mouse_pos;
-    GetCursorPos(mouse_pos);
+    POINT mouse_pos;
+    GetCursorPos(&mouse_pos);
 
     inputs[0].type = INPUT_MOUSE;
-    inputs[0].mi.dx = mouse_pos->x;
-    inputs[0].mi.dy = mouse_pos->y;
+    inputs[0].mi.dx = mouse_pos.x;
+    inputs[0].mi.dy = mouse_pos.y;
     
     inputs[1].type = INPUT_MOUSE;
 
