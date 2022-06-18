@@ -22,3 +22,7 @@ pacman -S mingw-w64-x86_64-rtmidi
 ```
 
 Next, open an MSYS2 terminal in the root directory of the project and run the makefile with the ```make``` command.
+
+### Windows (Visual Studio)
+
+Build with the solution file.
